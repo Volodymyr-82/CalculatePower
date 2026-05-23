@@ -1,0 +1,32 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="Eslint" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="langchain_hagginface" />
+          <option value="faice-cpu" />
+          <option value="langchain-google-genai" />
+          <option value="streamlit" />
+          <option value="pandas" />
+          <option value="langchain" />
+          <option value="pypdf" />
+          <option value="wikipedia" />
+          <option value="jq" />
+          <option value="dotenv" />
+          <option value="langchain_openai" />
+          <option value="chromadb" />
+          <option value="langchain_chroma" />
+          <option value="youtube_transcript_api" />
+          <option value="testwrap" />
+          <option value="pdf2image" />
+          <option value="fitz" />
+          <option value="frontend" />
+          <option value="tools" />
+          <option value="PyMuPDF" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
