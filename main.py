@@ -9,6 +9,7 @@ from graphic_funtion import create_vector_plot
 header = st.container()
 fields = st.container()
 writer = st.container()
+current_cotainer=st.container()
 graf = st.container()
 
 
@@ -18,6 +19,26 @@ with header:
     st.markdown("---")
 
 with fields:
+    with st.container():
+        col1, col2 = st.columns(2)
+        with col1:
+            radio_transform=st.radio(
+                label="Вид обліку електроенергії:",
+                options=("Лічильник прямого включення",
+                         "Лічильник трансформаторного включення")
+            )
+        with col2:
+            # Перевіряємо умову: якщо лічильник трансформаторний, то ПОКАЗУЄМО поле для введення
+            if radio_transform == "Лічильник трансформаторного включення":
+                coef_input = st.number_input("Коефіцієнт обліку", value=30, min_value=30, step=10)
+                coef = coef_input  # Беремо значення, яке ввів користувач
+            else:
+                # Якщо лічильник прямого включення, поле НЕ МАЛЮЄТЬСЯ,
+                # але ми створюємо приховану змінну в коді, щоб розрахунки не зламалися
+                coef = 1
+                st.write("ℹ️ *Коефіцієнт обліку для прямого включення дорівнює 1*")
+    st.markdown("---")
+
     # Розміщуємо поля введення в три колонки для зручності
     col1, col2, col3 = st.columns(3)
 
@@ -25,7 +46,7 @@ with fields:
         u_input = st.text_input("Напруга (В)", "220, 220, 220")
 
     with col2:
-        i_input = st.text_input("Струм (А)", "10, 15, 12")
+        i_input = st.text_input("Струм (А)", "3.5, 2.5, 4.5")
 
     with col3:
         angel_input = st.text_input("Кути (градуси)", "10, 10, 10")
@@ -81,7 +102,28 @@ if st.button("Розрахувати", use_container_width=True):
 
                 if total_apparent != 0:
                     st.metric(label=f"Коефіцієнт потужності (cos φ)", value=f"{total_active/total_apparent:.3f}", width= "content")
+        if radio_transform == "Лічильник трансформаторного включення":
+            with current_cotainer:
+                st.subheader("Струми (Первинний / Вторинний)", divider="blue")
 
+                # Створюємо 3 колонки, щоб метрики струмів красиво встали в один ряд, як і решта результатів
+                col_i1, col_i2, col_i3 = st.columns(3)
+
+                # Використовуємо вже розпарсений числовий масив 'current', а не текстовий 'i_input'
+                for idx, i in enumerate(current):
+                    # Розраховуємо первинний струм (струм трансформатора), множачи на коефіцієнт
+                    i_primary = i * coef
+
+                    # Розподіляємо вивід по трьох створених колонках динамічно
+                    if idx == 0:
+                        with col_i1:
+                            st.metric(label=f"Струм L1 (Іпр / Івтр)", value=f"{i_primary:.2f} / {i:.2f} А")
+                    elif idx == 1:
+                        with col_i2:
+                            st.metric(label=f"Струм L2 (Іпр / Івтр)", value=f"{i_primary:.2f} / {i:.2f} А")
+                    elif idx == 2:
+                        with col_i3:
+                            st.metric(label=f"Струм L3 (Іпр / Івтр)", value=f"{i_primary:.2f} / {i:.2f} А")
         # Вивід графіка у контейнер graf
         with graf:
             st.markdown("---")
