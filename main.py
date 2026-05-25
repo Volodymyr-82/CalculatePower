@@ -11,6 +11,7 @@ fields = st.container()
 writer = st.container()
 graf = st.container()
 
+
 with header:
     # Використовуємо стандартний заголовок без зайвих параметрів
     st.title("⚡ Калькулятор потужності")
@@ -70,13 +71,16 @@ if st.button("Розрахувати", use_container_width=True):
             with col2:
                 for idx, p in enumerate(reactive_p):
                     st.metric(label=f"Реактивна потужність L{idx + 1}", value=f"{p:.2f} кВАр")
+
             with col3:
-                st.metric(label=f"Загальна активна", value=f"{active_p.sum():.2f} кВт")
-                st.metric(label=f"Загальна реактивна", value=f"{reactive_p.sum():.2f} кВАр")
+                st.metric(label=f"Загальна активна потужність", value=f"{active_p.sum():.2f} кВт")
+                st.metric(label=f"Загальна реактивна потужність", value=f"{reactive_p.sum():.2f} кВАр")
                 total_active = active_p.sum()
                 total_apparent = apparent_p.sum()
+                st.metric(label=f"Загальна повна потужність", value=f"{total_apparent:.2f} кВА")
+
                 if total_apparent != 0:
-                    st.metric(label=f"Коефіцієнт потужності (cos φ)", value=f"{total_active/total_apparent:.3f}")
+                    st.metric(label=f"Коефіцієнт потужності (cos φ)", value=f"{total_active/total_apparent:.3f}", width= "content")
 
         # Вивід графіка у контейнер graf
         with graf:
