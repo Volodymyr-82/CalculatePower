@@ -1,6 +1,7 @@
 import numpy as np
 import streamlit as st
 import matplotlib.pyplot as plt
+from pyarrow.compute import scalar
 
 from model import PowerCalculator
 from graphic_funtion import create_vector_plot
@@ -8,6 +9,7 @@ from graphic_funtion import create_vector_plot
 # Налаштовуємо заголовки
 header = st.container()
 fields = st.container()
+scalar_container=st.container()
 writer = st.container()
 current_cotainer=st.container()
 graf = st.container()
@@ -20,7 +22,7 @@ with header:
 
 with fields:
     with st.container():
-        col1, col2 = st.columns(2)
+        col1, col2, col3 = st.columns(3)
         with col1:
             radio_transform=st.radio(
                 label="Вид обліку електроенергії:",
@@ -37,6 +39,12 @@ with fields:
                 # але ми створюємо приховану змінну в коді, щоб розрахунки не зламалися
                 coef = 1
                 st.write("ℹ️ *Коефіцієнт обліку для прямого включення дорівнює 1*")
+        with col3:
+            check_box=st.checkbox("Перевірка похибки лічильника")
+            if check_box:
+                sec_input=st.number_input("Час (сек)", value=10, min_value=1, step=1)
+                imp_input=st.number_input("Передаточне число (imp/кВт*год)", value=1600, min_value=10, step=50)
+                count_input = st.number_input("Кількість імпульсів (imp)", value=10, min_value=1, step=1)
     st.markdown("---")
 
     # Розміщуємо поля введення в три колонки для зручності
@@ -50,7 +58,12 @@ with fields:
 
     with col3:
         angel_input = st.text_input("Кути (градуси)", "10, 10, 10")
-
+# with scalar_container:
+#     scalar=st.slider(label="Маштаб U/I",
+#         min_value=1,
+#         max_value=50,
+#         value=15,
+#         step=5)
 # Одна кнопка для всіх обчислень
 if st.button("Розрахувати", use_container_width=True):
     try:
@@ -81,7 +94,8 @@ if st.button("Розрахувати", use_container_width=True):
         active_p = calculator.calculate_active_power()
         reactive_p = calculator.calculate_reactive_power()
         apparent_p = calculator.calculate_apparent_power()
-
+        total_active = active_p.sum()
+        total_apparent = apparent_p.sum()
         # Вивід результатів у контейнер writer
         with writer:
             st.subheader("Результати", divider="orange")
@@ -89,19 +103,36 @@ if st.button("Розрахувати", use_container_width=True):
             with col1:
                 for idx, p in enumerate(active_p):
                     st.metric(label=f"Активна потужність L{idx + 1}", value=f"{p:.2f} кВт")
+
             with col2:
                 for idx, p in enumerate(reactive_p):
                     st.metric(label=f"Реактивна потужність L{idx + 1}", value=f"{p:.2f} кВАр")
 
             with col3:
-                st.metric(label=f"Загальна активна потужність", value=f"{active_p.sum():.2f} кВт")
-                st.metric(label=f"Загальна реактивна потужність", value=f"{reactive_p.sum():.2f} кВАр")
-                total_active = active_p.sum()
-                total_apparent = apparent_p.sum()
-                st.metric(label=f"Загальна повна потужність", value=f"{total_apparent:.2f} кВА")
+                for idx, p in enumerate(apparent_p):
+                    st.metric(label=f"Повна потужність L{idx + 1}", value=f"{p:.2f} кВА")
 
-                if total_apparent != 0:
-                    st.metric(label=f"Коефіцієнт потужності (cos φ)", value=f"{total_active/total_apparent:.3f}", width= "content")
+            with st.container():
+                st.subheader("Загальні виміри", divider="green")
+                col1, col2, col3 = st.columns(3)
+
+                with col1:
+                    st.metric(label=f"Загальна активна потужність", value=f"{active_p.sum():.2f} кВт")
+                    if check_box:
+                        counter_error=((total_active*sec_input*imp_input)/(count_input*3600)-1)*100
+                        st.metric(label=f"Похибка лічильника", value=f"{counter_error:.2f} %")
+
+                with col2:
+                    st.metric(label=f"Загальна реактивна потужність", value=f"{reactive_p.sum():.2f} кВАр")
+
+                with col3:
+
+                    st.metric(label=f"Загальна повна потужність", value=f"{total_apparent:.2f} кВА")
+                    if total_apparent != 0:
+                        st.metric(label=f"Коефіцієнт потужності (cos φ)", value=f"{total_active / total_apparent:.3f}",
+                                  width="content")
+
+
         if radio_transform == "Лічильник трансформаторного включення":
             with current_cotainer:
                 st.subheader("Струми (Первинний / Вторинний)", divider="blue")
@@ -128,7 +159,7 @@ if st.button("Розрахувати", use_container_width=True):
         with graf:
             st.markdown("---")
             st.subheader("Vector diagram", text_alignment="center")
-            fig_to_show = create_vector_plot(voltage, current, angles)
+            fig_to_show = create_vector_plot(voltage, current, angles, coef)
             st.pyplot(fig_to_show)
             # col_text, col_plot = st.columns([1, 2])
             #

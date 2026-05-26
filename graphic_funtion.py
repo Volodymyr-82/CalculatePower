@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def create_vector_plot(U, I, angles_deg):
+def create_vector_plot(U, I, angles_deg, scalar = 10):
     # Створюємо фігуру
     fig, ax = plt.subplots(figsize=(10, 10))
 
@@ -16,7 +16,7 @@ def create_vector_plot(U, I, angles_deg):
     # Налаштування для 3-х фаз
     phase_angles = [90, -30, -150]  # Фази A, B, C
     colors = ['#FFD700', 'green', 'red']  # Золотистий замість жовтого (краще видно)
-    scalar = 10  # Твій коефіцієнт масштабу для струму
+    #scalar = 10  # Твій коефіцієнт масштабу для струму
 
     for i in range(len(U)):
         # Напруга (суцільна лінія)
@@ -44,7 +44,7 @@ def create_vector_plot(U, I, angles_deg):
                       width=0.007, label=f'I{i + 1}')
 
     ax.legend()
-    ax.set_xlim(ax.get_xlim()[0] - 100, ax.get_xlim()[1] + 100)
-    ax.set_ylim(ax.get_ylim()[0] - 50, ax.get_ylim()[1] + 150)
+    ax.set_xlim(ax.get_xlim()[0] - 200, ax.get_xlim()[1] + 200)
+    ax.set_ylim(ax.get_ylim()[0] - 150, ax.get_ylim()[1] + 250)
     ax.grid(True, linestyle=':', alpha=0.5)
     return fig
