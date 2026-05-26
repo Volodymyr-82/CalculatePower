@@ -10,14 +10,14 @@ class PowerCalculator:
      self.angles = angles
 
   def calculate_active_power(self) -> np.ndarray:
-    P = self.voltage * self.current * np.cos(np.radians(self.angles)) / 1000
+    P = self.voltage * self.current * np.cos(np.radians(self.angles))
     return P
 
   def calculate_apparent_power(self) -> np.ndarray:
-    S = self.voltage * self.current * 1e-3
+    S = self.voltage * self.current 
     return S
 
   def calculate_reactive_power(self) -> np.ndarray:
-    Q = self.voltage * self.current * np.sin(np.radians(self.angles)) / 1000
+    Q = self.voltage * self.current * np.sin(np.radians(self.angles))
     return Q
 

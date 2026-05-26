@@ -94,36 +94,37 @@ if st.button("Розрахувати", use_container_width=True):
         active_p = calculator.calculate_active_power()
         reactive_p = calculator.calculate_reactive_power()
         apparent_p = calculator.calculate_apparent_power()
-        total_active = active_p.sum()
-        total_apparent = apparent_p.sum()
+        total_active = active_p.sum()/1000
+        total_reactive = reactive_p.sum() / 1000
+        total_apparent = apparent_p.sum()/1000
         # Вивід результатів у контейнер writer
         with writer:
             st.subheader("Результати", divider="orange")
             col1, col2, col3 = st.columns(3)
             with col1:
                 for idx, p in enumerate(active_p):
-                    st.metric(label=f"Активна потужність L{idx + 1}", value=f"{p:.2f} кВт")
+                    st.metric(label=f"Активна потужність L{idx + 1}", value=f"{p:.2f} Вт")
 
             with col2:
                 for idx, p in enumerate(reactive_p):
-                    st.metric(label=f"Реактивна потужність L{idx + 1}", value=f"{p:.2f} кВАр")
+                    st.metric(label=f"Реактивна потужність L{idx + 1}", value=f"{p:.2f} ВАр")
 
             with col3:
                 for idx, p in enumerate(apparent_p):
-                    st.metric(label=f"Повна потужність L{idx + 1}", value=f"{p:.2f} кВА")
+                    st.metric(label=f"Повна потужність L{idx + 1}", value=f"{p:.2f} ВА")
 
             with st.container():
                 st.subheader("Загальні виміри", divider="green")
                 col1, col2, col3 = st.columns(3)
 
                 with col1:
-                    st.metric(label=f"Загальна активна потужність", value=f"{active_p.sum():.2f} кВт")
+                    st.metric(label=f"Загальна активна потужність", value=f"{total_active:.2f} кВт")
                     if check_box:
                         counter_error=((total_active*sec_input*imp_input)/(count_input*3600)-1)*100
                         st.metric(label=f"Похибка лічильника", value=f"{counter_error:.2f} %")
 
                 with col2:
-                    st.metric(label=f"Загальна реактивна потужність", value=f"{reactive_p.sum():.2f} кВАр")
+                    st.metric(label=f"Загальна реактивна потужність", value=f"{total_reactive:.2f} кВАр")
 
                 with col3:
 
