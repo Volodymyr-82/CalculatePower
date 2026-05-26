@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def create_vector_plot(U, I, angles_deg, scalar = 10):
+def create_vector_plot(U, I, angles_deg, scalar):
     # Створюємо фігуру
     fig, ax = plt.subplots(figsize=(10, 10))
 
