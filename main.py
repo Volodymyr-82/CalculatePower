@@ -42,8 +42,9 @@ with fields:
         with col3:
             check_box=st.checkbox("Перевірка похибки лічильника")
             if check_box:
-                sec_input=st.number_input("Час (сек)", value=10, min_value=1, step=1)
+                sec_input=st.number_input("Час (сек)", value=10.0, min_value=0.01, step=0.01)
                 imp_input=st.number_input("Передаточне число (imp/кВт*год)", value=1600, min_value=10, step=50)
+
                 count_input = st.number_input("Кількість імпульсів (imp)", value=10, min_value=1, step=1)
     st.markdown("---")
 
@@ -51,19 +52,14 @@ with fields:
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        u_input = st.text_input("Напруга (В)", "220, 220, 220")
+        u_input = st.text_input("Напруга (В)", "230, 230, 230")
 
     with col2:
         i_input = st.text_input("Струм (А)", "3.5, 2.5, 4.5")
 
     with col3:
         angel_input = st.text_input("Кути (градуси)", "10, 10, 10")
-# with scalar_container:
-#     scalar=st.slider(label="Маштаб U/I",
-#         min_value=1,
-#         max_value=50,
-#         value=15,
-#         step=5)
+
 # Одна кнопка для всіх обчислень
 if st.button("Розрахувати", use_container_width=True):
     try:
@@ -118,17 +114,17 @@ if st.button("Розрахувати", use_container_width=True):
                 col1, col2, col3 = st.columns(3)
 
                 with col1:
-                    st.metric(label=f"Загальна активна потужність", value=f"{total_active:.2f} кВт")
+                    st.metric(label=f"Загальна активна потужність", value=f"{total_active:.3f} кВт")
                     if check_box:
                         counter_error=((total_active*sec_input*imp_input)/(count_input*3600)-1)*100
-                        st.metric(label=f"Похибка лічильника", value=f"{counter_error:.2f} %")
+                        st.metric(label=f"Похибка лічильника", value=f"{counter_error:.3f} %")
 
                 with col2:
-                    st.metric(label=f"Загальна реактивна потужність", value=f"{total_reactive:.2f} кВАр")
+                    st.metric(label=f"Загальна реактивна потужність", value=f"{total_reactive:.3f} кВАр")
 
                 with col3:
 
-                    st.metric(label=f"Загальна повна потужність", value=f"{total_apparent:.2f} кВА")
+                    st.metric(label=f"Загальна повна потужність", value=f"{total_apparent:.3f} кВА")
                     if total_apparent != 0:
                         st.metric(label=f"Коефіцієнт потужності (cos φ)", value=f"{total_active / total_apparent:.3f}",
                                   width="content")

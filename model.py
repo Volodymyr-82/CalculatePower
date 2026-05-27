@@ -14,7 +14,7 @@ class PowerCalculator:
     return P
 
   def calculate_apparent_power(self) -> np.ndarray:
-    S = self.voltage * self.current 
+    S = self.voltage * self.current
     return S
 
   def calculate_reactive_power(self) -> np.ndarray:

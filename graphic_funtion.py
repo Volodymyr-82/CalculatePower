@@ -3,7 +3,10 @@ import numpy as np
 
 
 def create_vector_plot(U, I, angles_deg, scalar):
-    # Створюємо фігуру
+
+    if scalar == 1:
+        scalar=30
+
     fig, ax = plt.subplots(figsize=(10, 10))
 
     # Твоя логіка осей
@@ -44,6 +47,7 @@ def create_vector_plot(U, I, angles_deg, scalar):
                       width=0.007, label=f'I{i + 1}')
 
     ax.legend()
+    
     ax.set_xlim(ax.get_xlim()[0] - 200, ax.get_xlim()[1] + 200)
     ax.set_ylim(ax.get_ylim()[0] - 150, ax.get_ylim()[1] + 250)
     ax.grid(True, linestyle=':', alpha=0.5)
