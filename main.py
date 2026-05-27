@@ -22,7 +22,7 @@ with header:
 
 with fields:
     with st.container():
-        col1, col2, col3 = st.columns(3)
+        col1, col2, col3 = st.columns([0.8,1,1],gap="xxsmall")
         with col1:
             radio_transform=st.radio(
                 label="Вид обліку електроенергії:",
@@ -38,7 +38,7 @@ with fields:
                 # Якщо лічильник прямого включення, поле НЕ МАЛЮЄТЬСЯ,
                 # але ми створюємо приховану змінну в коді, щоб розрахунки не зламалися
                 coef = 1
-                st.write("ℹ️ *Коефіцієнт обліку для прямого включення дорівнює 1*")
+                st.write("ℹ️ *Коефіцієнт обліку дорівнює 1*")
         with col3:
             check_box=st.checkbox("Перевірка похибки лічильника")
             if check_box:
@@ -135,7 +135,7 @@ if st.button("Розрахувати", use_container_width=True):
                 st.subheader("Струми (Первинний / Вторинний)", divider="blue")
 
                 # Створюємо 3 колонки, щоб метрики струмів красиво встали в один ряд, як і решта результатів
-                col_i1, col_i2, col_i3 = st.columns(3)
+                col_i1, col_i2, col_i3 = st.columns(3, gap="xxsmall")
 
                 # Використовуємо вже розпарсений числовий масив 'current', а не текстовий 'i_input'
                 for idx, i in enumerate(current):
@@ -146,12 +146,17 @@ if st.button("Розрахувати", use_container_width=True):
                     if idx == 0:
                         with col_i1:
                             st.metric(label=f"Струм L1 (Іпр / Івтр)", value=f"{i_primary:.2f} / {i:.2f} А")
+                            st.metric(label=f"Активна потужність L1 (Pпр / Pвтр)", value=f"{active_p[0]*coef:.0f} / {active_p[0]:.0f} Вт")
                     elif idx == 1:
                         with col_i2:
                             st.metric(label=f"Струм L2 (Іпр / Івтр)", value=f"{i_primary:.2f} / {i:.2f} А")
+                            st.metric(label=f"Активна потужність L2 (Pпр / Pвтр)",
+                                      value=f"{active_p[1] * coef:.0f} / {active_p[1]:.0f} Вт")
                     elif idx == 2:
                         with col_i3:
                             st.metric(label=f"Струм L3 (Іпр / Івтр)", value=f"{i_primary:.2f} / {i:.2f} А")
+                            st.metric(label=f"Активна потужність L3 (Pпр / Pвтр)",
+                                      value=f"{active_p[2] * coef:.0f} / {active_p[2]:.0f} Вт")
         # Вивід графіка у контейнер graf
         with graf:
             st.markdown("---")
