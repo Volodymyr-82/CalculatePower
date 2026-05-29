@@ -6,6 +6,10 @@ import matplotlib.pyplot as plt
 from model import PowerCalculator
 from graphic_funtion import create_vector_plot
 
+st.set_page_config(page_title='Power Calculator', layout='wide', page_icon='🪫')
+header = st.container()
+
+
 # Налаштовуємо заголовки
 header = st.container()
 fields = st.container()
